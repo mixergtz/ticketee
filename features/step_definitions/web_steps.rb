@@ -152,9 +152,21 @@ Then /^(?:|I )should see "([^\"]*)" within "([^\"]*)"$/ do |text, selector|
     if defined?(Spec::Rails::Matchers)
       content.should contain(text)
     else
-      assert content.include?(text)
+      assert have_content(text)
     end
   end
+end
+
+Then /^(?:|I )should see ([^\"]*) within a div with id "([^\"]*)"$/ do |text, selector|
+  # checks for text within a specified div id
+  within "##{selector}" do |content|  
+    if defined?(Spec::Rails::Matchers)
+      content.should contain(text)
+    else
+      hc = Webrat::Matchers::HasContent.new(text)
+      assert hc.matches?(content), hc.failure_message
+    end  
+  end     
 end
 
 Then /^(?:|I )should see \/([^\/]*)\/$/ do |regexp|
